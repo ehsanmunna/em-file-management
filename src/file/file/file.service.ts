@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { join } from 'path';
 import { createReadStream } from 'fs';
-import { FileEntity } from '../file-entity/file-entity';
+import { join } from 'path';
 import { PaginationDto } from 'src/dto/pagination.dto';
+import { FindManyOptions, Like, Repository } from 'typeorm';
+import { FileEntity } from '../file-entity/file-entity';
 
 @Injectable()
 export class FileService {
@@ -23,13 +23,26 @@ export class FileService {
   }
 
   async getFiles(paginationDto: PaginationDto) {
-    const { page, limit } = paginationDto;
+    const { page, limit, filename, mimetype } = paginationDto;
     const skip = (page - 1) * limit;
-
-    const [data, total] = await this.fileRepository.findAndCount({
+    const params: FindManyOptions<FileEntity> = {
       skip,
       take: limit,
-    });
+      where: {},
+    }
+    if (filename) {
+      params.where = {
+        filename: Like(`%${filename}%`),
+      };
+    }
+    if (mimetype) {
+      params.where = {
+        ...params.where,
+        ...{mimetype: mimetype}
+      };
+    }
+
+    const [data, total] = await this.fileRepository.findAndCount(params);
     
 
     return {
@@ -44,8 +57,6 @@ export class FileService {
   async getFileStream(filename: string) {
     const file = await this.fileRepository.findOne({ where: { filename } });
     if (!file) throw new Error('File not found');
-    
-    // const filePath = join(__dirname, '../../uploads', file.filename);
     const filePath = join(process.cwd(), 'uploads', filename);
     return createReadStream(filePath);
   }

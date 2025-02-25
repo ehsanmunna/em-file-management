@@ -1,19 +1,12 @@
 
-import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { FileSearchEntity } from './search.dto';
 
 @Entity()
-export class FileEntity {
+export class FileEntity extends FileSearchEntity {
 @PrimaryGeneratedColumn()
 id: number;
 
 @Column()
-filename: string;
-
-@Column()
 path: string;
-
-@Column()
-mimetype: string;
 }
-

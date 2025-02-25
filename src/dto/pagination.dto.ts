@@ -1,6 +1,8 @@
 import { IsInt, IsOptional, Min } from 'class-validator';
 import { Type } from 'class-transformer';
-export class PaginationDto {
+import { FileEntity } from 'src/file/file-entity/file-entity';
+import { FileSearchEntity } from 'src/file/file-entity/search.dto';
+export class PaginationDto extends FileSearchEntity {
     @IsOptional()
     @Type(() => Number)
     @IsInt()
