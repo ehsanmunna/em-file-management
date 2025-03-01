@@ -21,7 +21,7 @@ import { FileEntity } from './file/file-entity/file-entity';
       database: 'file-management',
       synchronize: true, // Set to false in production
       entities: [FileEntity],
-      logging: true,
+      // logging: true,
       extra: {
         trustServerCertificate: true, // Required for local development
       },
